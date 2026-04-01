@@ -1,4 +1,4 @@
-<img width="790" height="601" alt="image" src="https://github.com/user-attachments/assets/db601e02-b53c-42f5-8ab2-0c0f2c3c2e1e" />
+<img width="400" height="601" alt="image" src="https://github.com/user-attachments/assets/db601e02-b53c-42f5-8ab2-0c0f2c3c2e1e" />
 
 
 # Job Search Pipeline
