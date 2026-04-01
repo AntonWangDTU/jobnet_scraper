@@ -1,4 +1,9 @@
+<img width="790" height="601" alt="image" src="https://github.com/user-attachments/assets/db601e02-b53c-42f5-8ab2-0c0f2c3c2e1e" />
+
+
 # Job Search Pipeline
+
+
 
 Automated job scraper and LLM-based matcher for [Jobnet.dk](https://jobnet.dk). Scrapes postings by keyword, scores each one against your profile and example references, and saves a ranked report of the best matches.
 
