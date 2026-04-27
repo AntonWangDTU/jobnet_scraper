@@ -6,10 +6,9 @@ from pathlib import Path
 KEYWORDS = [
     # Core roles
     "Data scientist",
+    "Data Science",
     "Machine learning",
     "Machine learning engineer",
-    "AI engineer",
-    "Data engineer",
     "Analytics engineer",
     # Bioinformatics / life science
     "Bioinformatics",
@@ -19,8 +18,6 @@ KEYWORDS = [
     # Deep learning / generative
     "Deep learning",
     "Generative AI",
-    "NLP",
-    "Computer vision",
     # MLOps / infra
     "MLOps",
     "Data platform",
@@ -200,16 +197,37 @@ def run_pipeline(
     jobs = scrape_all(max_per_keyword=max_per_keyword)
     print(f"Unique jobs found: {len(jobs)}\n")
 
+    reported_ids = load_reported_ids()
+    print(f"Previously reported job IDs: {len(reported_ids)}\n")
+
     matches = []
+    num_skipped = 0
     for i, job in enumerate(jobs, 1):
+        if job["id"] in reported_ids:
+            print(f"[{i}/{len(jobs)}] SKIP (already reported): {job['title']} @ {job['company']}")
+            num_skipped += 1
+            continue
         print(f"[{i}/{len(jobs)}] {job['title']} @ {job['company']}")
         result = evaluate(job, references, resolved_model)
         if result["match"] and result["score"] >= min_score:
             matches.append(result)
+    print(f"Number of skipped jobs (already reported): {num_skipped}")
 
     matches.sort(key=lambda x: x["score"], reverse=True)
     save_report(matches[:10])
     return matches
+
+
+def load_reported_ids() -> set[str]:
+    reports_dir = Path(__file__).parent.parent / "reports"
+    seen: set[str] = set()
+    for report in reports_dir.glob("*.md"):
+        for line in report.read_text().splitlines():
+            if line.startswith("- **ID:**"):
+                job_id = line.split(":", 1)[1].strip()
+                if job_id:
+                    seen.add(job_id)
+    return seen
 
 
 def save_report(matches: list[dict]) -> None:
@@ -221,6 +239,7 @@ def save_report(matches: list[dict]) -> None:
         reason = job["llm_response"].split("REASON:", 1)[-1].strip()
         lines.append(f"## {i}. [{job['title']} @ {job['company']}]({job['url']})")
         lines.append(f"{reason}")
+        lines.append(f"- **ID:** {job['id']}")
         lines.append(f"- **URL:** {job['url']}")
         lines.append(f"- **Deadline:** {job['deadline']}\n")
 

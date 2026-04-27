@@ -58,4 +58,6 @@ def scrape_jobnet(search_term: str, max_results: int = 50, region: str = "Hoveds
     return jobs[:max_results]
 
 
-# h print the occupation in each disct thea is scraped_jobs
+if __name__ == "__main__":
+    jobs = scrape_jobnet(search_term="data science", max_results=1)
+    print(jobs)
